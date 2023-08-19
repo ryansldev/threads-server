@@ -3,17 +3,21 @@
   "version": "1.0.0",
   "main": "index.js",
   "repository": "https://github.com/ryansldev/threads-server.git",
-  "author": "ryansldev <ryanlima1310@gmail.com>",
+  "author": "ryansldev <ryanlima1309@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "dotenv -e .env.development -- tsx watch src/server.ts"
+    "dev": "dotenv -e .env.development -- tsx watch src/server.ts",
+    "migrate:dev": "dotenv -e .env.development -- npx prisma migrate dev",
+    "seed:dev": "dotenv -e .env.development -- npx prisma db seed"
   },
   "dependencies": {
+    "@prisma/client": "^5.1.1",
     "fastify": "^4.21.0"
   },
   "devDependencies": {
     "@types/node": "^20.5.0",
     "dotenv-cli": "^7.3.0",
+    "prisma": "^5.1.1",
     "tsx": "^3.12.7",
     "typescript": "^5.1.6"
   }
