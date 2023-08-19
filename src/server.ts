@@ -1,10 +1,8 @@
 import Fastify from 'fastify'
+import { appRoutes } from './routes'
 
 const app = Fastify()
-
-app.get('/hello', () => {
-  return 'Hello NLW'
-})
+app.register(appRoutes)
 
 app.listen({
   port: Number(process.env.PORT),
