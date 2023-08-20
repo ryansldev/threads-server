@@ -8,13 +8,17 @@
   "scripts": {
     "dev": "dotenv -e .env.development -- tsx watch src/server.ts",
     "migrate:dev": "dotenv -e .env.development -- npx prisma migrate dev",
-    "seed:dev": "dotenv -e .env.development -- npx prisma db seed"
+    "seed:dev": "dotenv -e .env.development -- npx prisma db seed",
+    "studio:dev": "dotenv -e .env.development -- npx prisma studio"
   },
   "dependencies": {
     "@prisma/client": "^5.1.1",
-    "fastify": "^4.21.0"
+    "bcrypt": "^5.1.1",
+    "fastify": "^4.21.0",
+    "zod": "^3.22.2"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/node": "^20.5.0",
     "dotenv-cli": "^7.3.0",
     "prisma": "^5.1.1",
