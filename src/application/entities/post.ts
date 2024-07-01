@@ -107,6 +107,14 @@ export class Post {
     this.props.relatedTo.push(comment)
   }
 
+  get author(): User {
+    return this.props.author;
+  }
+
+  get authorId(): string {
+    return this.props.authorId;
+  }
+
   get createdAt(): Date {
     return this.props.createdAt
   }
