@@ -1,11 +1,13 @@
 import { User } from '../../entities/user';
 import { UsersRepository } from '../../repositories/users-repository';
 
+import { UserNotFound } from './errors/UserNotFound'
+
 interface FindUserRequest {
   userId: string;
 }
 
-type FindUserResponse = User | undefined
+type FindUserResponse = User
 
 export class FindUser {
   constructor (
@@ -15,6 +17,11 @@ export class FindUser {
   async execute({
     userId
   }: FindUserRequest): Promise<FindUserResponse> {
-    return await this.usersRepository.find(userId)
+    const user = await this.usersRepository.find(userId)
+    if(!user) {
+      throw new UserNotFound()
+    }
+
+    return user
   }
 }

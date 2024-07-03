@@ -1,9 +1,11 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify"
+import { FastifyInstance } from "fastify"
+import { UsersController } from "./infra/http/controllers/users.controller"
+
+const usersController = new UsersController()
 
 async function routes(app: FastifyInstance) {
-  app.get('/', async (_request: FastifyRequest, _reply: FastifyReply) => {
-    return { hello: 'world' }
-  })
+  app.post('/users', usersController.create)
+  app.get('/users/:userId', usersController.find)
 }
 
 export default routes
