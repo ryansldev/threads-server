@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { InMemoryUsersRepository } from '../../repositories/in-memory/in-memory-users-repository'
 import { CreateUser } from './create-user'
 import { AuthenticateUser } from './authenticate-user'
-import { UserNotFound } from './errors/UserNotFound'
+import { UserAuthenticationFailed } from './errors/UserAuthenticationFailed'
 
 describe('Authenticate User', () => {
   it('should be able to authenticate a user', async () => {
@@ -16,12 +16,27 @@ describe('Authenticate User', () => {
       password: 'johndoe123'
     })
 
-    await user.hashPassword()
-
     expect(sut.execute({
       username: 'johndoe',
       password: 'johndoe123'
-    })).resolves.toBe(true)
+    })).resolves.toStrictEqual({ id: user.id })
+  })
+
+  it('should not be able to authenticate a user with wrong password', async () => {
+    const usersRepository = new InMemoryUsersRepository()
+    const createUser = new CreateUser(usersRepository)
+    const sut = new AuthenticateUser(usersRepository)
+
+    await createUser.execute({
+      name: 'John Doe',
+      username: 'johndoe',
+      password: 'johndoe123'
+    })
+
+    expect(sut.execute({
+      username: 'johndoe',
+      password: 'johndoe12'
+    })).rejects.toThrowError(UserAuthenticationFailed)
   })
 
   it('should not be able to authenticate a user that not exists', () => {
@@ -31,6 +46,6 @@ describe('Authenticate User', () => {
     expect(sut.execute({
       username: 'johndoe',
       password: 'johndoe123'
-    })).rejects.toBeInstanceOf(UserNotFound)
+    })).rejects.toThrowError(UserAuthenticationFailed)
   })
 })

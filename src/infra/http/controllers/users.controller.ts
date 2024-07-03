@@ -6,8 +6,8 @@ import { InMemoryUsersRepository } from '../../../application/repositories/in-me
 import { UserViewModel } from '../view-models/user-view-model'
 
 import { CreateUser } from '../../../application/use-cases/user/create-user'
-
 import { FindUser } from '../../../application/use-cases/user/find-user'
+import { AuthenticateUser } from '../../../application/use-cases/user/authenticate-user'
 
 const usersRepository = new InMemoryUsersRepository()
 
@@ -46,5 +46,28 @@ export class UsersController {
     const user = await findUser.execute({ userId })
 
     return reply.status(HttpStatusCode.OK).send(UserViewModel.toHTTP(user))
+  }
+
+  async authenticate(request: FastifyRequest, reply: FastifyReply) {
+    const authenticateBodySchema = z.object({
+      username: z.string().trim().toLowerCase(),
+      password: z.string(),
+    })
+
+    const {
+      username,
+      password
+    } = authenticateBodySchema.parse(request.body)
+
+    const authenticateUser = new AuthenticateUser(usersRepository)
+
+    const { id } = await authenticateUser.execute({
+      username,
+      password,
+    })
+
+    return reply.jwtSign({ id }).then(function (token) {
+      return { token }
+    })
   }
 }

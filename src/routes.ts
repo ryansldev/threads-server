@@ -6,6 +6,7 @@ const usersController = new UsersController()
 async function routes(app: FastifyInstance) {
   app.post('/users', usersController.create)
   app.get('/users/:userId', usersController.find)
+  app.post('/users/auth', usersController.authenticate)
 }
 
 export default routes

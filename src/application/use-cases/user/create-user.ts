@@ -29,6 +29,8 @@ export class CreateUser {
       password,
     })
 
+    await user.hashPassword()
+
     await this.usersRepository.create(user)
 
     return user

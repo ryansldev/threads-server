@@ -7,6 +7,10 @@ interface AuthenticateUserRequest {
   password: string;
 }
 
+interface AuthenticateUserResponse {
+  id: string;
+}
+
 export class AuthenticateUser {
   constructor(
     private usersRepository: UsersRepository
@@ -15,11 +19,12 @@ export class AuthenticateUser {
   async execute({
     username,
     password
-  }: AuthenticateUserRequest): Promise<boolean> {
+  }: AuthenticateUserRequest): Promise<AuthenticateUserResponse> {
     const user = await this.usersRepository.findByUsername(username)
 
     if(!user) {
-      throw new UserNotFound()
+      // Why not UserNotFound? Security reasons
+      throw new UserAuthenticationFailed()
     }
 
     const isAuthenticated = await user.authenticate(password)
@@ -27,6 +32,6 @@ export class AuthenticateUser {
       throw new UserAuthenticationFailed()
     }
 
-    return isAuthenticated
+    return { id: user.id }
   }
 }
