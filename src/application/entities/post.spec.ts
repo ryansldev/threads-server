@@ -188,6 +188,45 @@ it('should be able to comment on post', () => {
 
   post.comment('New comment', author)
 
-  expect(post.relatedTo).length(1)
+  const comment = post.comments[0]
+
+  expect(post.comments).length(1)
+  expect(comment).toBeInstanceOf(Post)
+  expect(comment.relatedTo).toBeInstanceOf(Post)
+  expect(comment.relatedToId).toBe(post.id)
+  expect(comment.relatedTo).toBe(post)
   expect(author.posted).length(2)
+})
+
+it('should be able to another user comment on post', () => {
+  const author = new User({
+    name: 'John Doe',
+    username: '@johndoe',
+    bio: 'John Doe',
+    password: 'johndoe123',
+  })
+  
+  const post = new Post({
+    content: 'New post',
+    authorId: author.id,
+    author,
+  })
+
+  const anotherUser = new User({
+    name: 'John Doe',
+    username: 'johndoe',
+    password: 'johndoe123',
+  })
+
+  post.comment('New comment', anotherUser)
+
+  const comment = post.comments[0]
+
+  expect(post.comments).length(1)
+  expect(comment).toBeInstanceOf(Post)
+  expect(comment.relatedTo).toBeInstanceOf(Post)
+  expect(comment.relatedToId).toBe(post.id)
+  expect(comment.relatedTo).toBe(post)
+  expect(author.posted).length(1)
+  expect(anotherUser.posted).length(1)
 })

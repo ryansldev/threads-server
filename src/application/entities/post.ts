@@ -10,7 +10,9 @@ export interface PostProps {
   author: User;
   likedBy: User[];
   repostedBy: User[];
-  relatedTo: Post[];
+  comments: Post[];
+  relatedTo?: Post;
+  relatedToId?: Post["id"];
   createdAt: Date;
   updatedAt?: Date;
 }
@@ -18,7 +20,7 @@ export interface PostProps {
 export class Post {
   private props: PostProps
 
-  constructor (props: Replace<PostProps, { id?: string, createdAt?: Date; likedBy?: User[]; repostedBy?: User[]; relatedTo?: Post[]; }>) {
+  constructor (props: Replace<PostProps, { id?: string, createdAt?: Date; likedBy?: User[]; repostedBy?: User[]; relatedTo?: Post; comments?: Post[]; }>) {
     if(props.content.length > 500) {
       throw new BadRequestError("Post content exceeds 500 characters limit")
     }
@@ -32,8 +34,8 @@ export class Post {
       id: props.id ?? randomUUID(),
       ...props,
       likedBy: props.likedBy ?? [],
+      comments: props.comments ?? [],
       repostedBy: props.repostedBy ?? [],
-      relatedTo: props.relatedTo ?? [],
       createdAt: props.createdAt,
     }
 
@@ -90,12 +92,24 @@ export class Post {
     user.reposted.push(this)
   }
 
-  get relatedTo(): Post[] {
+  get relatedTo(): Post | undefined {
     return this.props.relatedTo
   }
 
-  set relatedTo(relatedTo: Post[]) {
+  set relatedTo(relatedTo: Post) {
     this.props.relatedTo = relatedTo
+  }
+
+  get relatedToId(): Post["id"] | undefined {
+    return this.props.relatedToId
+  }
+
+  get comments(): Post[] {
+    return this.props.comments
+  }
+
+  set comments(comments: Post[]) {
+    this.props.comments = comments
   }
 
   async comment(content: string, author: User) {
@@ -103,8 +117,11 @@ export class Post {
       content,
       author,
       authorId: author.id,
+      relatedTo: this,
+      relatedToId: this.id,
     })
-    this.props.relatedTo.push(comment)
+
+    this.props.comments.push(comment)
   }
 
   get author(): User {
